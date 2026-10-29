@@ -1,0 +1,47 @@
+// Regenerate with: node scripts/generate-assets.mjs <directory containing sharp>
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { createRequire } from 'node:module';
+import { resolve, join } from 'node:path';
+const require = createRequire(import.meta.url);
+const sharp = require(process.argv[2] ? join(resolve(process.argv[2]), 'sharp') : 'sharp');
+await mkdir('public/icons', { recursive: true });
+await mkdir('public/samples', { recursive: true });
+const logo = await readFile('public/favicon.svg');
+await Promise.all(
+  [192, 512].map((size) =>
+    sharp(logo).resize(size, size).png().toFile(`public/icons/icon-${size}.png`),
+  ),
+);
+const mark = await sharp(logo).resize(320, 320).png().toBuffer();
+await sharp({ create: { width: 512, height: 512, channels: 4, background: '#27634a' } })
+  .composite([{ input: mark, left: 96, top: 96 }])
+  .png()
+  .toFile('public/icons/maskable-512.png');
+for (const scenario of ['normal', 'anomaly', 'missing']) {
+  const price = scenario === 'anomaly' ? '2,500' : '2,800';
+  const amount = scenario === 'anomaly' ? '7,500' : '8,400';
+  const total = scenario === 'anomaly' ? '13,500' : '14,400';
+  const blank = scenario === 'missing';
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="650" height="850" viewBox="0 0 650 850">
+  <rect width="650" height="850" fill="#fffef9"/>
+  <g font-family="'Malgun Gothic','Noto Sans KR',sans-serif" fill="#40493d">
+  <rect x="40" y="35" width="570" height="44" rx="4" fill="#eef2e8"/>
+  <text x="325" y="63" text-anchor="middle" font-size="17" fill="#7b8c6a">시연용 가상 문서 · 실제 거래 아님</text>
+  <text x="325" y="140" text-anchor="middle" font-size="34" letter-spacing="10">${blank ? '검 수 명 세 서' : '거 래 명 세 서'}</text>
+  <text x="55" y="210" font-size="16" fill="#8f9888">공급받는 자</text><text x="215" y="210" font-size="19">부산 한 끼 (가상 매장)</text>
+  <text x="55" y="255" font-size="16" fill="#8f9888">공급자</text><text x="215" y="255" font-size="19">부산청과 (가상 업체)</text>
+  <text x="55" y="300" font-size="16" fill="#8f9888">거래일</text><text x="215" y="300" font-size="18">시연 당일</text>
+  <rect x="45" y="346" width="560" height="50" fill="#f0f2eb"/>
+  <path d="M45 346H605V554H45Z M45 396H605 M45 475H605 M245 346V554 M335 346V554 M465 346V554" stroke="#c4cbbb" fill="none"/>
+  <g font-size="17" text-anchor="middle"><text x="145" y="377">품목 · 규격</text><text x="290" y="377">수량</text><text x="400" y="377">단가</text><text x="535" y="377">금액</text>
+  <text x="145" y="443">양파 1kg</text><text x="290" y="443">3</text><text x="400" y="443">${blank ? '—' : price}</text><text x="535" y="443">${blank ? '—' : amount}</text>
+  <text x="145" y="522">대파 1단</text><text x="290" y="522">2</text><text x="400" y="522">${blank ? '—' : '3,000'}</text><text x="535" y="522">${blank ? '—' : '6,000'}</text></g>
+  <text x="70" y="615" font-size="20">합계 금액</text><text x="580" y="615" font-size="27" text-anchor="end">${blank ? '가격 미기재' : total + ' 원'}</text>
+  <path d="M45 646H605" stroke="#dce1d5"/>
+  <text x="325" y="704" font-size="15" fill="#98a18e" text-anchor="middle">원본과 인식 결과를 비교해 주세요.</text>
+  <text x="325" y="736" font-size="14" fill="#98a18e" text-anchor="middle">사업자번호 · 계좌번호 · 개인정보 없는 가상 자료</text>
+  <text x="325" y="798" font-size="17" fill="#7f946c" text-anchor="middle">ZC FNB · 데모 워크스페이스</text>
+  </g></svg>`;
+  await writeFile(`public/samples/${scenario}.svg`, svg);
+}
+console.log('Generated 3 PWA icons and 3 synthetic receipt samples.');

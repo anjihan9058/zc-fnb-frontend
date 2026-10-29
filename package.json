@@ -1,0 +1,38 @@
+{
+  "name": "zc-fnb",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "test": "vitest run",
+    "typecheck": "tsc -b",
+    "format": "prettier --write src scripts vite.config.ts package.json tsconfig.json"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.90.5",
+    "exceljs": "4.4.0",
+    "idb-keyval": "^6.2.2",
+    "lucide-react": "^0.548.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.9.4",
+    "recharts": "^3.3.0",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@types/node": "^24.9.1",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@vitejs/plugin-react": "^5.0.4",
+    "fake-indexeddb": "^6.2.4",
+    "jsdom": "^30.1.3",
+    "prettier": "^3.6.2",
+    "typescript": "~5.9.3",
+    "vite": "^7.1.12",
+    "vite-plugin-pwa": "^1.1.0",
+    "vitest": "^3.2.4"
+  }
+}

@@ -1,0 +1,14 @@
+/*
+ * ZC FNB stylesheet entry. Design tokens live in theme.css; each partial below
+ * owns one area of the product and is declared once, in cascade order.
+ */
+@import './styles/base.css';
+@import './styles/shell.css';
+@import './styles/components.css';
+@import './styles/tables.css';
+@import './styles/home.css';
+@import './styles/finance.css';
+@import './styles/documents.css';
+@import './styles/inventory.css';
+@import './styles/schedules.css';
+@import './styles/chat.css';

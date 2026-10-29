@@ -1,0 +1,20 @@
+node_modules/
+dist/
+.env
+.env.local
+.env.*
+!.env.example
+*.tsbuildinfo
+artifacts/
+.pnpm-store/
+
+# Local logs, editor state and receipt photos are not project source.
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+/IMG_2318.jpg
+/IMG_2319.jpg
+/IMG_2318.jpeg
+/IMG_2319.jpeg

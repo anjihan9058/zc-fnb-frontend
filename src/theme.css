@@ -1,0 +1,140 @@
+/*
+ * ZC FNB design tokens.
+ * This file only declares variables. Every component reads these roles, so the
+ * colour themes below change the whole product without overriding selectors.
+ */
+:root {
+  color-scheme: light;
+
+  /* Brand — replaced by the colour theme chosen in 앱 설정. */
+  --brand: #2563eb;
+  --brand-hover: #1d4ed8;
+  --brand-strong: #1e40af;
+  --brand-soft: #edf3ff;
+  --brand-soft-hover: #dfe9fe;
+  --brand-border: #bcd0fb;
+  --focus-ring: 0 0 0 3px rgb(37 99 235 / 0.22);
+
+  /* Neutrals */
+  --canvas: #f3f5f8;
+  --surface: #ffffff;
+  --surface-subtle: #f8fafc;
+  --surface-muted: #f1f4f8;
+  --text: #172033;
+  --text-secondary: #475467;
+  --text-tertiary: #667085;
+  --text-disabled: #98a2b3;
+  --border: #e3e8ef;
+  --border-strong: #cdd5df;
+  --divider: #edf0f5;
+
+  /* Meaning — kept stable across colour themes. */
+  --success: #157f3d;
+  --success-soft: #e8f6ec;
+  --success-border: #b9e2c6;
+  --warning: #a35a00;
+  --warning-soft: #fdf3e1;
+  --warning-border: #f0d29c;
+  --danger: #c8322b;
+  --danger-soft: #fdeceb;
+  --danger-border: #f4c4c0;
+  --increase: var(--danger);
+  --decrease: #1d6fa5;
+
+  /* Data series (staff lineup, small charts). */
+  --series-1: var(--brand);
+  --series-2: #0f8b7d;
+  --series-3: #c27c0e;
+  --series-4: #7c4dcc;
+
+  /* Team chat — KakaoTalk palette. Fixed across colour themes so the
+     messenger reads like the one staff already use every day. */
+  --chat-background: #b2c7d9;
+  --chat-header-border: #a3b8c9;
+  --chat-notice: #c3d3df;
+  --chat-notice-border: #b0c3d1;
+  --chat-notice-text: #3f5463;
+  --chat-chip: #75899a;
+  --chat-meta: #3f5262;
+  --chat-incoming: #ffffff;
+  --chat-outgoing: #fee500;
+  --chat-outgoing-text: #191919;
+
+  /* Type */
+  --font-sans:
+    'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', -apple-system, BlinkMacSystemFont,
+    'Segoe UI', sans-serif;
+  --fs-11: 11px;
+  --fs-12: 12px;
+  --fs-13: 13px;
+  --fs-14: 14px;
+  --fs-16: 16px;
+  --fs-18: 18px;
+  --fs-22: 22px;
+  --fs-28: 28px;
+  --lh-tight: 1.3;
+  --lh-normal: 1.55;
+  --lh-relaxed: 1.7;
+
+  /* Shape and depth */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 999px;
+  --shadow-xs: 0 1px 2px rgb(16 24 40 / 0.04);
+  --shadow-sm: 0 1px 3px rgb(16 24 40 / 0.06), 0 1px 2px rgb(16 24 40 / 0.03);
+  --shadow-pop: 0 12px 32px rgb(16 24 40 / 0.12), 0 2px 6px rgb(16 24 40 / 0.05);
+  --shadow-modal: 0 24px 64px rgb(16 24 40 / 0.2);
+
+  /* Layout */
+  --rail-width: 64px;
+  --subnav-width: 224px;
+  --topbar-height: 56px;
+  --page-max: 1440px;
+  --page-pad-x: 32px;
+  --page-pad-y: 28px;
+  --section-gap: 20px;
+  --panel-pad: 20px;
+  --control-h: 40px;
+  --control-h-sm: 32px;
+  --mobile-nav-height: 64px;
+}
+
+:root[data-color-theme='teal'] {
+  --brand: #0f766e;
+  --brand-hover: #115e59;
+  --brand-strong: #134e4a;
+  --brand-soft: #e7f5f2;
+  --brand-soft-hover: #d4ede8;
+  --brand-border: #a6d8cf;
+  --focus-ring: 0 0 0 3px rgb(15 118 110 / 0.22);
+}
+
+:root[data-color-theme='indigo'] {
+  --brand: #4f46e5;
+  --brand-hover: #4338ca;
+  --brand-strong: #3730a3;
+  --brand-soft: #efeefe;
+  --brand-soft-hover: #e2e0fd;
+  --brand-border: #c4c0f8;
+  --focus-ring: 0 0 0 3px rgb(79 70 229 / 0.22);
+}
+
+@media (max-width: 1024px) {
+  :root {
+    --page-pad-x: 24px;
+    --page-pad-y: 24px;
+  }
+}
+
+@media (max-width: 760px) {
+  :root {
+    --page-pad-x: 16px;
+    --page-pad-y: 18px;
+    --section-gap: 16px;
+    --panel-pad: 16px;
+    --control-h: 44px;
+    --control-h-sm: 36px;
+  }
+}

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="540" viewBox="0 0 800 540">
+  <rect width="800" height="540" fill="#faf9f5"/>
+  <g font-family="sans-serif" fill="#263d33">
+    <text x="55" y="70" font-size="30" font-weight="bold">ZC FNB · 가상 근무표</text>
+    <text x="55" y="108" font-size="18">실제 직원 정보가 아닌 체험용 자료 · 날짜는 체험 당일</text>
+    <path d="M55 155H745M55 215H745M55 295H745M55 375H745" stroke="#b5c5ba" fill="none"/>
+    <g font-size="22"><text x="70" y="192">직원</text><text x="300" y="192">출근</text><text x="460" y="192">퇴근</text><text x="620" y="192">휴게</text>
+    <text x="70" y="263">김민수</text><text x="300" y="263">09:00</text><text x="460" y="263">18:00</text><text x="620" y="263">60분</text>
+    <text x="70" y="343">이서?</text><text x="300" y="343">12:00</text><text x="460" y="343">20:00</text><text x="620" y="343">미기재</text></g>
+    <text x="55" y="440" font-size="19">이름과 휴게 시간이 불명확한 행은 직접 확인해 주세요.</text>
+    <text x="55" y="477" font-size="16">자동으로 추정하지 않고 확인 후 쉬프트로 확정합니다.</text>
+  </g>
+</svg>

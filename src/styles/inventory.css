@@ -1,0 +1,764 @@
+/* 재고·원가: 메뉴·레시피, 식재료 가격, 식재료 관리, 입고 검수. */
+
+/* Shared stat strip and filter row */
+.operations-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-bottom: var(--section-gap);
+  padding: 14px 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-xs);
+}
+.operations-stats > div {
+  min-width: 0;
+  padding: 2px var(--panel-pad);
+}
+.operations-stats > div + div {
+  border-left: 1px solid var(--divider);
+}
+.operations-stats span {
+  display: block;
+  color: var(--text-secondary);
+  font-size: var(--fs-13);
+}
+.operations-stats strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.modal .operations-stats {
+  box-shadow: none;
+}
+.operations-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px 12px;
+  margin-bottom: 16px;
+}
+.operations-filter .field {
+  flex: 0 1 280px;
+  gap: 4px;
+  margin: 0;
+  font-size: var(--fs-12);
+}
+.operations-filter > .btn {
+  margin-left: auto;
+}
+
+/* Menus */
+.menu-cost-table {
+  overflow-x: auto;
+}
+.menu-cost-table table {
+  min-width: 860px;
+}
+.menu-cost-table :is(th, td):first-child {
+  padding-left: var(--panel-pad);
+}
+.menu-cost-table :is(th, td):last-child {
+  padding-right: var(--panel-pad);
+}
+.menu-cost-table td {
+  height: 60px;
+}
+.menu-cost-table td:first-child strong {
+  display: block;
+  font-weight: 600;
+}
+.menu-cost-table td small {
+  max-width: 260px;
+}
+.menu-cost-table td.up {
+  color: var(--increase);
+  font-weight: 600;
+}
+.table-row-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+.table-row-actions .btn.small {
+  width: 32px;
+  padding: 0;
+}
+.menu-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.menu-card {
+  padding: 16px;
+}
+.menu-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.menu-card-header > div {
+  flex: 1;
+  min-width: 0;
+}
+.menu-card-header h2 {
+  font-size: var(--fs-16);
+  overflow-wrap: anywhere;
+}
+.menu-card-header small {
+  display: block;
+  margin-top: 2px;
+  color: var(--text-tertiary);
+}
+.menu-card-price {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 16px 0 12px;
+}
+.menu-card-price > span {
+  color: var(--text-secondary);
+  font-size: var(--fs-13);
+}
+.menu-card-price > strong {
+  font-size: var(--fs-22);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.menu-card-rates {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.menu-card-rates > div {
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: var(--surface-subtle);
+}
+.menu-card-rates span {
+  display: block;
+  color: var(--text-tertiary);
+  font-size: var(--fs-12);
+}
+.menu-card-rates strong {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--fs-18);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.menu-card .review-hint,
+.review-hint {
+  margin: 0 0 12px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--warning-soft);
+  color: var(--warning);
+  font-size: var(--fs-12);
+  line-height: var(--lh-normal);
+}
+.menu-price-change {
+  margin: 0 0 12px;
+  color: var(--text-secondary);
+  font-size: var(--fs-13);
+}
+.menu-calculation-note {
+  margin-top: 16px;
+  color: var(--text-tertiary);
+  font-size: var(--fs-12);
+  line-height: var(--lh-relaxed);
+}
+.modal .table-scroll {
+  margin-bottom: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+.modal .table-scroll td {
+  vertical-align: top;
+}
+.cost-conversion {
+  display: block;
+  margin-top: 4px;
+  color: var(--text-tertiary);
+  font-size: var(--fs-12);
+}
+.cost-source-link {
+  display: flex;
+  margin-top: 6px;
+}
+
+/* Unused summary card kept for the exported MenuCostPanel. */
+.menu-cost-panel {
+  margin-bottom: var(--section-gap);
+}
+.menu-cost-overview-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 14px var(--panel-pad);
+  border-top: 1px solid var(--divider);
+}
+.menu-cost-overview-row small {
+  display: block;
+  color: var(--text-tertiary);
+}
+.menu-cost-overview-row > div:last-child {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  width: 260px;
+}
+.menu-cost-overview-row b {
+  margin-left: 4px;
+}
+.cost-progress {
+  width: 100%;
+  height: 6px;
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+  background: var(--surface-muted);
+}
+.cost-progress > span {
+  display: block;
+  height: 100%;
+  background: var(--brand);
+}
+.menu-price-alert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px var(--panel-pad);
+  background: var(--warning-soft);
+  color: var(--warning);
+  font-size: var(--fs-13);
+}
+.menu-cost-panel > .menu-calculation-note {
+  margin: 0;
+  padding: 12px var(--panel-pad);
+  border-top: 1px solid var(--divider);
+}
+
+/* Recipe editor */
+.recipe-heading {
+  margin: 8px 0 4px;
+  font-size: var(--fs-16);
+}
+.recipe-editor-rows {
+  margin: 14px 0;
+}
+.recipe-editor-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(80px, 0.7fr) minmax(80px, 0.6fr) 36px;
+  align-items: end;
+  gap: 10px;
+  padding: 12px 0;
+  border-top: 1px solid var(--divider);
+}
+.recipe-editor-row .field {
+  margin: 0;
+}
+.recipe-editor-row > .icon-btn {
+  height: var(--control-h);
+  color: var(--text-tertiary);
+}
+.recipe-editor-row > .icon-btn:hover {
+  color: var(--danger);
+}
+
+/* Ingredient prices */
+.price-page-layout {
+  display: grid;
+  grid-template-columns: 236px minmax(0, 1fr);
+  align-items: start;
+  gap: var(--section-gap);
+}
+.product-selector {
+  position: sticky;
+  top: calc(var(--topbar-height) + 16px);
+  padding: 12px;
+}
+.product-selector .search-field {
+  height: 38px;
+  margin-bottom: 10px;
+}
+.product-select-list {
+  display: grid;
+  gap: 2px;
+}
+.product-select-list > button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--text);
+  text-align: left;
+}
+.product-select-list > button:hover {
+  background: var(--surface-muted);
+}
+.product-select-list > button.active {
+  background: var(--brand-soft);
+}
+.product-select-list > button > span:nth-child(2) {
+  flex: 1;
+  min-width: 0;
+}
+.product-initial {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  background: var(--surface-muted);
+  color: var(--text-secondary);
+  font-size: var(--fs-13);
+  font-weight: 700;
+}
+.product-select-list button.active .product-initial {
+  background: var(--brand);
+  color: #fff;
+}
+.product-select-list strong {
+  display: block;
+  font-size: var(--fs-14);
+  font-weight: 600;
+}
+.product-select-list button.active strong {
+  color: var(--brand-strong);
+}
+.product-select-list small {
+  display: block;
+  color: var(--text-tertiary);
+}
+.product-select-list button > svg {
+  color: var(--brand);
+  opacity: 0;
+}
+.product-select-list button.active > svg {
+  opacity: 1;
+}
+.price-main {
+  display: grid;
+  gap: var(--section-gap);
+  min-width: 0;
+}
+.chart-filters {
+  display: flex;
+  gap: 8px;
+}
+.chart-filters select {
+  width: auto;
+  min-width: 132px;
+  max-width: 200px;
+  height: 36px;
+  font-size: var(--fs-13);
+}
+.price-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--divider);
+}
+.price-summary > div {
+  min-width: 0;
+  padding: 14px var(--panel-pad);
+}
+.price-summary > div + div {
+  border-left: 1px solid var(--divider);
+}
+.price-summary span {
+  display: block;
+  color: var(--text-secondary);
+  font-size: var(--fs-13);
+}
+.price-summary strong {
+  display: block;
+  margin-top: 4px;
+  font-size: var(--fs-22);
+  font-weight: 700;
+  line-height: 1.25;
+  font-variant-numeric: tabular-nums;
+}
+.price-summary > div:first-child strong {
+  font-size: var(--fs-28);
+}
+.price-summary small {
+  display: block;
+  margin-top: 4px;
+  color: var(--text-tertiary);
+  font-size: var(--fs-12);
+  line-height: var(--lh-normal);
+}
+.price-change-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px var(--panel-pad) 0;
+  border-top: 1px solid var(--divider);
+  font-size: var(--fs-13);
+  font-weight: 600;
+}
+.price-chart {
+  height: 260px;
+  min-width: 0;
+  padding: 8px 16px 16px 0;
+}
+.price-main .table-scroll {
+  border-top: 1px solid var(--border);
+}
+.price-main .table-scroll :is(th, td):first-child {
+  padding-left: var(--panel-pad);
+}
+.price-main .table-scroll :is(th, td):last-child {
+  padding-right: var(--panel-pad);
+}
+.price-main .table-scroll td {
+  color: var(--text-secondary);
+}
+.price-main .table-scroll td.money {
+  color: var(--text);
+}
+.demo-footnote {
+  color: var(--text-tertiary);
+  font-size: var(--fs-12);
+  line-height: var(--lh-relaxed);
+}
+
+/* Ingredients */
+.product-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  padding: 4px var(--panel-pad) var(--panel-pad);
+}
+.product-card {
+  min-width: 0;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+.product-card > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.product-card h3 {
+  font-size: var(--fs-16);
+}
+.product-card p {
+  margin-top: 2px;
+  color: var(--text-tertiary);
+  font-size: var(--fs-13);
+}
+.product-card p span {
+  margin: 0 4px;
+}
+.alias-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 12px;
+}
+.alias-tags span {
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
+  background: var(--surface-muted);
+  color: var(--text-secondary);
+  font-size: var(--fs-12);
+}
+.panel > .panel-heading > .search-field {
+  width: 280px;
+  height: 38px;
+}
+.product-cards > .empty {
+  grid-column: 1 / -1;
+}
+
+/* Receiving */
+.receiving-page .table-scroll :is(th, td):first-child {
+  padding-left: var(--panel-pad);
+}
+.receiving-page .table-scroll :is(th, td):last-child {
+  padding-right: var(--panel-pad);
+  text-align: right;
+}
+.receiving-page .table-scroll td {
+  height: 60px;
+  color: var(--text-secondary);
+}
+.receiving-page .table-scroll td:first-child strong {
+  color: var(--text);
+}
+.receiving-price-status {
+  display: block;
+  margin-top: 4px;
+  color: var(--text-tertiary);
+  font-size: var(--fs-12);
+}
+.receiving-editor-line {
+  margin: 12px 0;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+.receiving-editor-line > .field {
+  margin: 12px 0 0;
+}
+.receiving-editor-line .schedule-toolbar {
+  margin-bottom: 10px;
+}
+.receiving-line-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.7fr) minmax(0, 1.2fr);
+  align-items: end;
+  gap: 14px;
+}
+.receiving-line-fields .field,
+.receiving-line-fields .shift-reviewed {
+  margin: 0;
+}
+.receiving-line-fields .shift-reviewed {
+  align-items: center;
+  min-height: var(--control-h);
+}
+.receiving-difference {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: var(--control-h);
+}
+.receiving-difference > span {
+  color: var(--text-tertiary);
+  font-size: var(--fs-12);
+}
+.receiving-difference > strong {
+  font-size: var(--fs-16);
+  font-variant-numeric: tabular-nums;
+}
+.receiving-confirm {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid var(--brand-border);
+  border-radius: var(--radius-md);
+  background: var(--brand-soft);
+}
+.receiving-confirm p {
+  margin-top: 4px;
+  color: var(--text-secondary);
+  font-size: var(--fs-13);
+}
+.receiving-confirm .upload-actions {
+  margin-top: 12px;
+}
+
+@media (max-width: 1280px) {
+  .menu-cards,
+  .product-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 1024px) {
+  .price-page-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .product-selector {
+    position: static;
+    padding: 8px;
+  }
+  .product-selector .search-field {
+    display: none;
+  }
+  .product-select-list {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .product-select-list > button {
+    flex-shrink: 0;
+    padding: 6px 12px 6px 6px;
+  }
+  .product-select-list small,
+  .product-select-list button > svg {
+    display: none;
+  }
+  .product-initial {
+    width: 28px;
+    height: 28px;
+  }
+}
+@media (min-width: 761px) {
+  .menus-page:has(.menu-cost-table) .menu-cards {
+    display: none;
+  }
+}
+@media (max-width: 760px) {
+  .menu-cost-table {
+    display: none;
+  }
+  .menu-cards,
+  .product-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .operations-stats {
+    padding: 12px 0;
+  }
+  .operations-stats > div {
+    padding: 0 12px;
+  }
+  .operations-stats span {
+    font-size: var(--fs-12);
+  }
+  .operations-stats strong {
+    font-size: 20px;
+  }
+  .operations-filter {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .operations-filter > .btn {
+    grid-column: 1 / -1;
+    margin-left: 0;
+  }
+  .recipe-editor-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr) 36px;
+  }
+  .recipe-editor-row > .field:first-child {
+    grid-column: 1 / -1;
+  }
+  .chart-filters {
+    width: 100%;
+  }
+  .chart-filters select {
+    flex: 1;
+    max-width: none;
+    height: var(--control-h);
+  }
+  .price-chart-panel .panel-heading {
+    flex-wrap: wrap;
+  }
+  .price-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .price-summary > div:first-child {
+    grid-column: 1 / -1;
+    border-bottom: 1px solid var(--divider);
+  }
+  .price-summary > div:nth-child(2) {
+    border-left: 0;
+  }
+  .price-summary strong {
+    font-size: var(--fs-18);
+  }
+  .price-chart {
+    height: 220px;
+  }
+  .panel > .panel-heading:has(> .search-field) {
+    flex-wrap: wrap;
+  }
+  .panel > .panel-heading > .search-field {
+    width: 100%;
+    height: var(--control-h);
+  }
+  .receiving-line-fields {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .receiving-line-fields > .shift-reviewed {
+    grid-column: 1 / -1;
+    min-height: 0;
+  }
+  .receiving-editor-line {
+    padding: 12px;
+  }
+}
+
+/* Waste log */
+.operations-stats small {
+  display: block;
+  margin-top: 2px;
+  color: var(--text-tertiary);
+  font-size: var(--fs-12);
+}
+.waste-reason {
+  display: block;
+  color: var(--text);
+}
+.waste-reason small {
+  display: block;
+  max-width: 260px;
+  margin-top: 2px;
+  overflow: hidden;
+  color: var(--text-tertiary);
+  font-size: var(--fs-12);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.waste-basis {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-top: 12px;
+  color: var(--text-tertiary);
+  font-size: var(--fs-12);
+  line-height: var(--lh-relaxed);
+}
+.waste-basis svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.waste-form fieldset {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.waste-form .form-grid {
+  gap: 14px;
+  margin: 0;
+}
+.waste-form .field {
+  margin: 0;
+}
+.waste-form textarea {
+  resize: vertical;
+}
+.waste-preview {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--brand-soft);
+  color: var(--text-secondary);
+  font-size: var(--fs-13);
+}
+.waste-preview strong {
+  color: var(--text);
+  font-size: var(--fs-18);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.waste-preview small {
+  flex-basis: 100%;
+  color: var(--text-tertiary);
+  font-size: var(--fs-12);
+}
+.waste-preview.unpriced {
+  background: var(--surface-muted);
+}

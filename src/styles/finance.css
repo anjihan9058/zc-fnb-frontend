@@ -1,0 +1,399 @@
+/* 매입 업무 센터, 보고서, 은행 거래. */
+
+.accounting-overview {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: var(--section-gap);
+  padding: 16px 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-xs);
+}
+.accounting-overview article {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  padding: 2px var(--panel-pad);
+}
+.accounting-overview article + article {
+  border-left: 1px solid var(--divider);
+}
+.accounting-overview small {
+  color: var(--text-tertiary);
+  font-size: var(--fs-12);
+}
+.accounting-overview small:first-child {
+  color: var(--text-secondary);
+  font-size: var(--fs-13);
+}
+.accounting-overview strong {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.accounting-payment-note strong {
+  color: var(--text-tertiary);
+  font-size: var(--fs-18);
+}
+
+/* Reports */
+.report-workspace {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  align-items: start;
+  gap: var(--section-gap);
+}
+.report-parameters {
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-xs);
+}
+.report-parameters h2 {
+  margin-bottom: 16px;
+  font-size: var(--fs-16);
+}
+.report-parameters .field {
+  margin-bottom: 14px;
+}
+.report-date-range {
+  display: grid;
+}
+.report-parameters > p {
+  padding-top: 12px;
+  border-top: 1px solid var(--divider);
+  font-size: var(--fs-12);
+  line-height: var(--lh-relaxed);
+}
+.report-output {
+  min-width: 0;
+}
+.report-output > .workspace-context-note {
+  margin: 0;
+  padding: 0 var(--panel-pad) 12px;
+}
+.report-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 24px;
+  padding: 14px var(--panel-pad);
+  border-top: 1px solid var(--border);
+  background: var(--surface-subtle);
+  color: var(--text-secondary);
+  font-size: var(--fs-14);
+}
+.report-total strong {
+  color: var(--text);
+  font-size: var(--fs-18);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.report-basis-note {
+  padding: 12px var(--panel-pad) 16px;
+  border-top: 1px solid var(--divider);
+  color: var(--text-tertiary);
+  font-size: var(--fs-12);
+  line-height: var(--lh-relaxed);
+}
+/* Profit and loss: data-readiness view and a clearly labelled example. */
+.profit-report-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  padding: 0 var(--panel-pad) 14px;
+  color: var(--text-tertiary);
+  font-size: var(--fs-13);
+}
+.profit-report .workspace-context-note {
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 8px;
+  margin: 0;
+  padding: 12px var(--panel-pad);
+  border-top: 1px solid var(--divider);
+  background: var(--surface-subtle);
+}
+.profit-report .workspace-context-note svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+  color: var(--text-tertiary);
+}
+.profit-example-note {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px var(--panel-pad);
+  border-top: 1px solid var(--warning-border);
+  border-bottom: 1px solid var(--warning-border);
+  background: var(--warning-soft);
+  color: var(--warning);
+  font-size: var(--fs-13);
+  font-weight: 500;
+  line-height: var(--lh-normal);
+}
+.profit-example-note strong {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--warning);
+  color: #ffffff;
+  font-size: var(--fs-12);
+}
+.profit-table th:first-child,
+.profit-table td:first-child {
+  padding-left: var(--panel-pad);
+}
+.profit-table th:last-child,
+.profit-table td:last-child {
+  padding-right: var(--panel-pad);
+}
+.profit-table td {
+  height: 52px;
+  color: var(--text-secondary);
+}
+.profit-table td:first-child {
+  color: var(--text);
+  font-weight: 600;
+}
+.profit-table td small {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  color: var(--text-tertiary);
+  font-size: var(--fs-12);
+  font-weight: 400;
+}
+.profit-table td small em {
+  padding: 0 6px;
+  border-radius: var(--radius-pill);
+  background: var(--brand-soft);
+  color: var(--brand-strong);
+  font-size: var(--fs-11);
+  font-style: normal;
+  font-weight: 600;
+  line-height: 18px;
+}
+.profit-table .profit-sub td:first-child,
+.profit-example .profit-note td:first-child {
+  padding-left: calc(var(--panel-pad) + 16px);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+.profit-example .profit-sub td:first-child {
+  padding-left: calc(var(--panel-pad) + 16px);
+  font-weight: 500;
+}
+.profit-example .profit-note td {
+  color: var(--text-tertiary);
+}
+.profit-example .profit-total td {
+  border-top: 1px solid var(--border-strong);
+  background: var(--surface-subtle);
+  color: var(--text);
+  font-weight: 700;
+}
+.profit-example .profit-total:first-child td {
+  border-top: 0;
+}
+.profit-example td.numeric {
+  width: 160px;
+  color: var(--text);
+}
+.profit-example .profit-sub td.numeric,
+.profit-example .profit-note td.numeric {
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+.profit-status {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 9px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-muted);
+  color: var(--text-secondary);
+  font-size: var(--fs-12);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.profit-status-linked {
+  background: var(--brand-soft);
+  color: var(--brand-strong);
+}
+.profit-status-partial {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+.profit-status-formula {
+  background: transparent;
+  color: var(--text-tertiary);
+}
+.profit-detail {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 10px;
+  color: var(--text-secondary);
+  font-size: var(--fs-12);
+}
+a.profit-detail:hover {
+  color: var(--brand-strong);
+}
+
+/* Bank */
+.bank-account-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: var(--fs-13);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.bank-account-picker select {
+  width: 260px;
+}
+.bank-deposit {
+  color: var(--brand-strong);
+  font-weight: 600;
+}
+
+@media (max-width: 1024px) {
+  .report-workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .report-parameters {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 14px;
+  }
+  .report-parameters h2,
+  .report-parameters > p,
+  .report-date-range {
+    grid-column: 1 / -1;
+  }
+  .report-date-range {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 14px;
+  }
+}
+@media (max-width: 760px) {
+  .accounting-overview {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 16px;
+    padding: 14px 0;
+  }
+  .accounting-overview article {
+    padding: 0 var(--panel-pad);
+  }
+  .accounting-overview article:nth-child(3) {
+    border-left: 0;
+  }
+  .accounting-overview article:nth-child(n + 3) {
+    padding-top: 14px;
+    border-top: 1px solid var(--divider);
+  }
+  .accounting-overview strong {
+    font-size: 20px;
+  }
+  .report-parameters {
+    padding: 16px;
+  }
+  .report-total {
+    justify-content: space-between;
+  }
+  .bank-account-picker {
+    flex: 1 1 100%;
+  }
+  .bank-account-picker select {
+    flex: 1;
+    width: auto;
+  }
+}
+
+@media (max-width: 760px) {
+  .profit-table thead {
+    display: none;
+  }
+  .profit-table,
+  .profit-table tbody {
+    display: block;
+  }
+  .profit-table tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 2px 12px;
+    padding: 12px var(--panel-pad);
+    border-bottom: 1px solid var(--divider);
+  }
+  .profit-table td,
+  .profit-table td:first-child,
+  .profit-table td:last-child,
+  .profit-table .profit-sub td:first-child,
+  .profit-example .profit-note td:first-child {
+    display: block;
+    height: auto;
+    padding: 0;
+    border: 0;
+    background: none;
+  }
+  .profit-table .profit-sub,
+  .profit-example .profit-note {
+    padding-left: calc(var(--panel-pad) + 14px);
+  }
+  /* Readiness view: account, needed data, then status on its own line. */
+  .profit-table:not(.profit-example) td {
+    grid-column: 1 / -1;
+  }
+  .profit-table:not(.profit-example) td:nth-child(2) {
+    color: var(--text-tertiary);
+    font-size: var(--fs-12);
+  }
+  .profit-table:not(.profit-example) td:nth-child(3) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 8px;
+    margin-top: 6px;
+  }
+  .profit-detail {
+    margin-left: 0;
+  }
+  /* Example view: name on the left, amount and ratio stacked on the right. */
+  .profit-example td:first-child {
+    grid-row: span 2;
+  }
+  .profit-example td.numeric {
+    width: auto;
+    text-align: right;
+  }
+  .profit-example td.numeric:last-child {
+    color: var(--text-tertiary);
+    font-size: var(--fs-12);
+    font-weight: 500;
+  }
+  .profit-example .profit-total {
+    border-top: 1px solid var(--border-strong);
+    background: var(--surface-subtle);
+  }
+  .profit-example .profit-total:first-child {
+    border-top: 0;
+  }
+  .profit-example .profit-total td {
+    border: 0;
+  }
+  .profit-example-note {
+    align-items: flex-start;
+  }
+}
