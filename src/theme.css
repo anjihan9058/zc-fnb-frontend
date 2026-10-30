@@ -47,6 +47,19 @@
   --series-3: #c27c0e;
   --series-4: #7c4dcc;
 
+  /* Charts. Fixed categorical order, validated for colour-vision deficiency
+     (blue, orange, aqua pass all-pairs). Sales is drawn in ink so the three
+     cost categories keep the three safe hues. Not themed: a colour always
+     means the same entity on every chart. */
+  --chart-ink: #172033;
+  --chart-1: #2a78d6;
+  --chart-2: #eb6834;
+  --chart-3: #1baf7a;
+  --chart-muted: #c3cad5;
+  --chart-track: #eef1f5;
+  --chart-grid: #edf0f5;
+  --chart-cursor: rgb(23 32 51 / 0.05);
+
   /* Team chat — KakaoTalk palette. Fixed across colour themes so the
      messenger reads like the one staff already use every day. */
   --chat-background: #b2c7d9;

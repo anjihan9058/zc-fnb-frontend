@@ -13,6 +13,9 @@ import { useMenuCosts, usePrices, useSummary } from '../app/hooks';
 import { useWorkspace } from '../app/WorkspaceProvider';
 import { WorkspaceGrid, type GridColumn } from '../features/WorkspaceGrid';
 import { ProfitReport } from '../features/ProfitReport';
+import { FinancialAnalysis } from '../features/FinancialAnalysis';
+import { MenuCostAnalysis } from '../features/MenuCostAnalysis';
+import { useAnalysisPreview } from '../app/useAnalysisPreview';
 import { Badge, Empty, ErrorState, Loading } from '../shared/ui';
 import { today, won } from '../shared/format';
 import type { Receipt, Purchase } from '../shared/types';
@@ -246,19 +249,19 @@ export function AccountingPage() {
 }
 
 export function FinancialDashboardPage() {
+  const analysis = useAnalysisPreview();
   const workspace = useWorkspace(),
     prices = usePrices(),
     summary = useSummary();
-  const date = today(),
-    monthly = prices.data?.filter(
-      (p) => p.purchased_at >= `${date.slice(0, 7)}-01` && p.purchased_at <= date,
-    );
+  const monthly = prices.data?.filter((p) => p.purchased_at.startsWith(analysis.month));
   return (
     <div className="page financial-dashboard">
       <header className="overview-header">
         <div className="overview-title">
           <span className="overview-store">{workspace.name}</span>
-          <h1>{Number(date.slice(5, 7))}월 재무 현황</h1>
+          <h1>
+            {analysis.month.slice(0, 4)}년 {Number(analysis.month.slice(5))}월 재무 현황
+          </h1>
         </div>
         <div className="overview-controls">
           <DashboardSelector value="financial" />
@@ -278,30 +281,7 @@ export function FinancialDashboardPage() {
           </Link>
         ))}
       </div>
-      <div className="finance-kpis">
-        <article>
-          <h2>매출</h2>
-          <strong>—</strong>
-          <p>매출 자료 연결 후 표시</p>
-        </article>
-        <article>
-          <h2>매장 손익</h2>
-          <strong>—</strong>
-          <p>회계 장부 연결 후 표시</p>
-        </article>
-        <article>
-          <h2>이번 달 확정 구매</h2>
-          <strong>
-            {monthly ? won(monthly.reduce((n, p) => n + p.quantity * p.unit_price, 0)) : '—'}
-          </strong>
-          <p>재고 사용 원가·손익과는 별도입니다.</p>
-        </article>
-        <article>
-          <h2>은행 대사</h2>
-          <strong>미연결</strong>
-          <p>계좌·장부 연결 후 표시</p>
-        </article>
-      </div>
+      <FinancialAnalysis model={analysis} />
       {(prices.error || summary.error) && (
         <ErrorState
           error={prices.error || summary.error}
@@ -327,6 +307,10 @@ export function FinancialDashboardPage() {
                 ? `${summary.data.recent.filter((r) => ['NEEDS_REVIEW', 'READY_TO_APPROVE'].includes(r.status)).length}건`
                 : '—'}
             </strong>
+            <p className="muted text-small">
+              기존 기록 · {analysis.month} 확정 구매{' '}
+              {monthly ? won(monthly.reduce((n, p) => n + p.quantity * p.unit_price, 0)) : '—'}
+            </p>
             <Link className="btn" to="/receipts?status=REVIEW">
               문서 확인
             </Link>
@@ -454,33 +438,37 @@ export function ReportsPage() {
               <option value="profit">손익 보고서</option>
             </select>
           </label>
-          <label className="field">
-            사업장
-            <input readOnly value={workspace.name} />
-          </label>
-          <div className="report-date-range">
+          {view !== 'cost' && (
             <label className="field">
-              시작일
-              <input
-                type="date"
-                value={from}
-                max={to || undefined}
-                onChange={(e) => setFrom(e.target.value)}
-              />
+              사업장
+              <input readOnly value={workspace.name} />
             </label>
-            <label className="field">
-              종료일
-              <input
-                type="date"
-                value={to}
-                min={from || undefined}
-                onChange={(e) => setTo(e.target.value)}
-              />
-            </label>
-          </div>
+          )}
+          {view !== 'cost' && (
+            <div className="report-date-range">
+              <label className="field">
+                시작일
+                <input
+                  type="date"
+                  value={from}
+                  max={to || undefined}
+                  onChange={(e) => setFrom(e.target.value)}
+                />
+              </label>
+              <label className="field">
+                종료일
+                <input
+                  type="date"
+                  value={to}
+                  min={from || undefined}
+                  onChange={(e) => setTo(e.target.value)}
+                />
+              </label>
+            </div>
+          )}
           <p className="muted">
             {view === 'cost'
-              ? '원가 분석은 기간과 관계없이 현재 레시피·최근 확정 단가를 표시합니다.'
+              ? '월별 비교는 원가 분석의 기준 월을 선택하세요. 아래 기존 레시피 조회는 최근 확정 단가를 사용합니다.'
               : '기간은 구매 거래일 기준입니다.'}
           </p>
         </aside>
@@ -496,32 +484,40 @@ export function ReportsPage() {
               </h2>
               <p className="muted text-small">
                 {workspace.name} ·{' '}
-                {view === 'cost' ? '현재 레시피 기준' : `${from || '전체'} ~ ${to || '전체'}`}
+                {view === 'cost'
+                  ? '월별 비교 · AI 분석 예시 · 현재 레시피 조회'
+                  : `${from || '전체'} ~ ${to || '전체'}`}
               </p>
             </div>
           </div>
           {view === 'profit' ? (
             <ProfitReport from={from} to={to} />
           ) : view === 'cost' ? (
-            menus.isPending ? (
-              <Loading />
-            ) : menus.error ? (
-              <ErrorState error={menus.error} retry={() => menus.refetch()} />
-            ) : (
-              <>
-                <WorkspaceGrid
-                  key="cost"
-                  rows={menus.data ?? []}
-                  columns={menuColumns}
-                  getId={(r) => r.menu.id}
-                  searchText={(r) => r.menu.name}
-                />
-                <p className="report-basis-note">
-                  판매량·재고 실사·폐기 자료가 없는 현재 보고서는 예상 식재료 원가입니다. 실제 사용
-                  원가·매장 순이익은 포함하지 않습니다.
-                </p>
-              </>
-            )
+            <>
+              <MenuCostAnalysis />
+              <details className="analysis-existing-menus">
+                <summary>현재 등록된 메뉴 · 최근 확정 단가 조회 (기존 기능)</summary>
+                {menus.isPending ? (
+                  <Loading />
+                ) : menus.error ? (
+                  <ErrorState error={menus.error} retry={() => menus.refetch()} />
+                ) : (
+                  <>
+                    <WorkspaceGrid
+                      key="cost"
+                      rows={menus.data ?? []}
+                      columns={menuColumns}
+                      getId={(r) => r.menu.id}
+                      searchText={(r) => r.menu.name}
+                    />
+                    <p className="report-basis-note">
+                      판매량·재고 실사·폐기 자료가 없는 현재 보고서는 예상 식재료 원가입니다. 실제
+                      사용 원가·매장 순이익은 포함하지 않습니다.
+                    </p>
+                  </>
+                )}
+              </details>
+            </>
           ) : prices.isPending ? (
             <Loading />
           ) : prices.error ? (

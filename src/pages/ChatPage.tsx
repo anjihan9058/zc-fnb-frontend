@@ -4,9 +4,10 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   ArrowDown,
-  ArrowUp,
+  ChevronDown,
+  ChevronUp,
+  Megaphone,
   MoreHorizontal,
-  Reply,
   ArrowLeft,
   ArrowRight,
   CalendarDays,
@@ -25,7 +26,7 @@ import {
   X,
 } from 'lucide-react';
 import { useWorkspace } from '../app/WorkspaceProvider';
-import { api, isDemo, validateFile, scheduleApi } from '../shared/api';
+import { api, chatManagementApi, isDemo, validateFile, scheduleApi } from '../shared/api';
 import { useReceipt, useRefresh } from '../app/hooks';
 import { Badge, Empty, ErrorState, Loading, Modal, useToast } from '../shared/ui';
 import { timeLabel, won } from '../shared/format';
@@ -208,10 +209,13 @@ function Conversation({
   const [searching, setSearching] = useState(false);
   const [search, setSearch] = useState('');
   const [activeSearchId, setActiveSearchId] = useState<string | null>(null);
+  const [flash, setFlash] = useState<string | null>(null);
+  const flashTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [actions, setActions] = useState<Message | null>(null);
   const [replyTo, setReplyTo] = useState<Message | null>(null);
   const lastSearch = useRef('');
   const [newMessages, setNewMessages] = useState(false);
+  const [scrolledUp, setScrolledUp] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<Error | null>(null);
   const [preview, setPreview] = useState<Message['attachment'] | null>(null);
@@ -239,6 +243,11 @@ function Conversation({
     queryKey: ['messages', roomId],
     queryFn: () => api.messages(roomId),
     refetchInterval: 4000,
+  });
+  // Shares the cache with the member list in the room drawer.
+  const members = useQuery({
+    queryKey: ['room-members', roomId],
+    queryFn: () => chatManagementApi.members(roomId),
   });
   const scheduleDocuments = useQuery({
     queryKey: ['work-schedules'],
@@ -275,6 +284,23 @@ function Conversation({
   const timeline = messages.data ?? [];
   const searchResults = search.trim() ? timeline.filter((m) => messageMatches(m, search)) : [];
   const searchIndex = searchResults.findIndex((m) => m.id === activeSearchId);
+  // KakaoTalk-style: the message you jump to is briefly shaded, then fades.
+  function flashMessage(id: string) {
+    if (flashTimer.current) clearTimeout(flashTimer.current);
+    setFlash(id);
+    flashTimer.current = setTimeout(() => setFlash(null), 1800);
+  }
+  useEffect(
+    () => () => {
+      if (flashTimer.current) clearTimeout(flashTimer.current);
+    },
+    [],
+  );
+  function closeSearch() {
+    searchInput.current?.blur();
+    setSearching(false);
+    setSearch('');
+  }
   function jumpToMessage(id: string, behavior: ScrollBehavior = 'smooth') {
     const container = scroller.current,
       target = document.getElementById('message-' + id);
@@ -293,6 +319,7 @@ function Conversation({
         container.clientHeight / 3,
       behavior,
     });
+    flashMessage(id);
   }
   useEffect(() => {
     if (!search.trim()) {
@@ -326,6 +353,7 @@ function Conversation({
     const el = scroller.current;
     if (el) el.scrollTo({ top: el.scrollHeight, behavior });
     setNewMessages(false);
+    setScrolledUp(false);
     nearBottom.current = true;
   }
   useEffect(() => {
@@ -350,6 +378,7 @@ function Conversation({
         container = scroller.current;
       if (target && container) {
         focusedMessage.current = targetMessage;
+        flashMessage(targetMessage);
         first.current = false;
         nearBottom.current = false;
         container.scrollTo({
@@ -397,97 +426,96 @@ function Conversation({
   }
   return (
     <section className="messenger-conversation" aria-label={`${name} 대화`}>
-      <header className="messenger-header">
-        <button className="icon-btn messenger-back" aria-label="채팅방 목록" onClick={openRooms}>
-          <ArrowLeft size={24} />
-        </button>
-        <span className="messenger-header-avatar">
-          <MessageCircle size={22} />
-        </span>
-        <div className="messenger-header-title">
-          <h2>{name}</h2>
-          <span>
-            {workspace.name}
-            {isDemo ? ' · 로컬 데모' : ''}
-          </span>
-        </div>
-        <button
-          className="icon-btn"
-          aria-label="대화 검색"
-          aria-expanded={searching}
-          onClick={() => {
-            setSearching(!searching);
-            if (searching) setSearch('');
-          }}
-        >
-          <Search size={21} />
-        </button>
-        <button
-          className="icon-btn"
-          aria-label="채팅방 메뉴"
-          aria-haspopup="dialog"
-          onClick={() => setMenu(true)}
-        >
-          <Menu size={23} />
-        </button>
+      <header className="messenger-header" data-searching={searching}>
+        {searching ? (
+          <>
+            <button className="icon-btn" aria-label="검색 닫기" onClick={closeSearch}>
+              <ArrowLeft size={24} />
+            </button>
+            <label className="messenger-search">
+              <Search size={17} />
+              <input
+                ref={searchInput}
+                type="search"
+                enterKeyHint="search"
+                value={search}
+                onChange={(e) => {
+                  nearBottom.current = false;
+                  first.current = false;
+                  setSearch(e.target.value);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Escape') closeSearch();
+                  if (e.key !== 'Enter' || e.nativeEvent.isComposing) return;
+                  e.preventDefault();
+                  // Phones: hide the keyboard so the result is visible. Desktop: step to older results.
+                  if (window.matchMedia('(max-width: 760px)').matches) e.currentTarget.blur();
+                  else moveSearch(e.shiftKey ? 1 : -1);
+                }}
+                aria-label="대화 내용 검색"
+                placeholder="대화 내용 검색"
+              />
+            </label>
+          </>
+        ) : (
+          <>
+            <button
+              className="icon-btn messenger-back"
+              aria-label="채팅방 목록"
+              onClick={openRooms}
+            >
+              <ArrowLeft size={24} />
+            </button>
+            <span className="messenger-header-avatar">
+              <MessageCircle size={22} />
+            </span>
+            <div className="messenger-header-title">
+              <h2>
+                {name}
+                {members.data && (
+                  <span
+                    className="messenger-member-count"
+                    aria-label={`참여자 ${members.data.members.length}명`}
+                  >
+                    {members.data.members.length}
+                  </span>
+                )}
+              </h2>
+              <span>
+                {workspace.name}
+                {isDemo ? ' · 로컬 데모' : ''}
+              </span>
+            </div>
+            <button
+              className="icon-btn"
+              aria-label="대화 검색"
+              aria-expanded={searching}
+              onClick={() => {
+                setSearching(true);
+                setAttachments(false);
+                setEmojis(false);
+              }}
+            >
+              <Search size={21} />
+            </button>
+            <button
+              className="icon-btn"
+              aria-label="채팅방 메뉴"
+              aria-haspopup="dialog"
+              onClick={() => setMenu(true)}
+            >
+              <Menu size={23} />
+            </button>
+          </>
+        )}
       </header>
-      {searching && (
-        <div className="messenger-search">
-          <Search size={19} />
-          <input
-            ref={searchInput}
-            type="search"
-            enterKeyHint="search"
-            value={search}
-            onChange={(e) => {
-              nearBottom.current = false;
-              first.current = false;
-              setSearch(e.target.value);
-            }}
-            aria-label="대화 내용 검색"
-            placeholder="대화 내용 검색"
-          />
-          <span aria-live="polite">
-            {search.trim()
-              ? searchResults.length
-                ? searchIndex + 1 + ' / ' + searchResults.length
-                : '0건'
-              : ''}
-          </span>
-          <button
-            className="icon-btn"
-            aria-label="이전 검색 결과"
-            disabled={searchIndex <= 0}
-            onClick={() => moveSearch(-1)}
-          >
-            <ArrowUp size={18} />
-          </button>
-          <button
-            className="icon-btn"
-            aria-label="다음 검색 결과"
-            disabled={searchIndex < 0 || searchIndex >= searchResults.length - 1}
-            onClick={() => moveSearch(1)}
-          >
-            <ArrowDown size={18} />
-          </button>
-          <button
-            className="icon-btn"
-            aria-label="검색 닫기"
-            onClick={() => {
-              searchInput.current?.blur();
-              setSearching(false);
-              setSearch('');
-            }}
-          >
-            <X size={18} />
-          </button>
-        </div>
-      )}
-      <div className="messenger-notice">
-        <ReceiptText size={15} />
-        <span>영수증은 확인 후 구매가격에 반영됩니다.</span>
-      </div>
       <div className="messenger-history-wrap">
+        {!searching && (
+          <div className="messenger-notice">
+            <Megaphone size={16} />
+            <span>영수증은 확인 후 구매가격에 반영됩니다.</span>
+          </div>
+        )}
         <div
           className="messages messenger-history"
           ref={scroller}
@@ -500,6 +528,8 @@ function Conversation({
             if (el) {
               nearBottom.current = el.scrollHeight - el.scrollTop - el.clientHeight < 100;
               if (nearBottom.current) setNewMessages(false);
+              // KakaoTalk shows the jump-down button only after you scroll up.
+              setScrolledUp(el.scrollHeight - el.scrollTop - el.clientHeight > 240);
             }
           }}
           onLoad={() => {
@@ -518,9 +548,6 @@ function Conversation({
                 이곳에 남겨 주세요.
               </p>
             </div>
-          )}
-          {search.trim() && !searchResults.length && (
-            <p className="messenger-search-empty">검색 결과가 없습니다.</p>
           )}
           {timeline.map((message, index) => {
             const before = timeline[index - 1],
@@ -549,7 +576,7 @@ function Conversation({
                 )}
                 <div
                   id={`message-${message.id}`}
-                  className={`message ${message.own ? 'own' : ''} ${continuation ? 'continued' : ''} ${(activeSearchId ?? targetMessage) === message.id ? 'message-target' : ''}`}
+                  className={`message ${message.own ? 'own' : ''} ${continuation ? 'continued' : ''} ${(activeSearchId ?? targetMessage) === message.id ? 'message-target' : ''} ${flash === message.id ? 'message-flash' : ''}`}
                 >
                   {!message.own && (
                     <span className={`message-avatar ${continuation ? 'invisible' : ''}`}>
@@ -571,15 +598,12 @@ function Conversation({
                             className="chat-message-quote"
                             onClick={() => jumpToMessage(message.reply_to!.id)}
                           >
-                            <Reply size={13} />
-                            <span>
-                              <strong>{message.reply_to.author}</strong>
-                              <small>
-                                {timeline.find((m) => m.id === message.reply_to!.id)?.deleted_at
-                                  ? '삭제된 메시지입니다.'
-                                  : message.reply_to.text}
-                              </small>
-                            </span>
+                            <strong>{message.reply_to.author}에게 답장</strong>
+                            <small>
+                              {timeline.find((m) => m.id === message.reply_to!.id)?.deleted_at
+                                ? '삭제된 메시지입니다.'
+                                : message.reply_to.text}
+                            </small>
                           </button>
                         )}
                         {message.deleted_at ? (
@@ -672,25 +696,60 @@ function Conversation({
             );
           })}
         </div>
-        {newMessages && (
-          <button className="messenger-new" onClick={() => scrollDown()}>
-            <ArrowDown size={16} />새 메시지 보기
+        {newMessages && timeline.length > 0 && (
+          <button
+            className="messenger-new"
+            aria-label="새 메시지 보기"
+            onClick={() => scrollDown()}
+          >
+            <strong>{timeline.at(-1)!.author}</strong>
+            <span>{messageText(timeline.at(-1)!)}</span>
+            <ChevronDown size={18} />
           </button>
         )}
-        <button
-          className="messenger-bottom"
-          aria-label="최근 메시지로 이동"
-          onClick={() => scrollDown()}
-        >
-          <ArrowDown size={19} />
-        </button>
+        {scrolledUp && (
+          <button
+            className="messenger-bottom"
+            aria-label="최근 메시지로 이동"
+            onClick={() => scrollDown()}
+          >
+            <ArrowDown size={19} />
+          </button>
+        )}
       </div>
-      {(send.error || attach.error || fileError) && (
+      {searching && (
+        <div className="messenger-search-nav" role="group" aria-label="검색 결과 이동">
+          <span aria-live="polite">
+            {!search.trim()
+              ? '찾을 단어를 입력해 주세요'
+              : searchResults.length
+                ? `검색 결과 ${searchResults.length}개 중 ${searchIndex + 1}번째`
+                : '검색 결과가 없습니다'}
+          </span>
+          <button
+            className="icon-btn"
+            aria-label="이전 검색 결과"
+            disabled={searchIndex <= 0}
+            onClick={() => moveSearch(-1)}
+          >
+            <ChevronUp size={22} />
+          </button>
+          <button
+            className="icon-btn"
+            aria-label="다음 검색 결과"
+            disabled={searchIndex < 0 || searchIndex >= searchResults.length - 1}
+            onClick={() => moveSearch(1)}
+          >
+            <ChevronDown size={22} />
+          </button>
+        </div>
+      )}
+      {!searching && (send.error || attach.error || fileError) && (
         <div className="messenger-error">
           <ErrorState error={send.error || attach.error || fileError} />
         </div>
       )}
-      {file && (
+      {!searching && file && (
         <div className="messenger-file-pending">
           <Paperclip size={19} />
           <span>
@@ -716,7 +775,7 @@ function Conversation({
           </button>
         </div>
       )}
-      {looksLikeSchedule(text) && (
+      {!searching && looksLikeSchedule(text) && (
         <div className="messenger-schedule-detected">
           <CalendarDays size={18} />
           <span>텍스트 근무표를 쉬프트로 정리할 수 있어요.</span>
@@ -725,9 +784,8 @@ function Conversation({
           </button>
         </div>
       )}
-      {replyTo && (
+      {!searching && replyTo && (
         <div className="chat-reply-draft">
-          <Reply size={18} />
           <div>
             <strong>{replyTo.author}에게 답장</strong>
             <p>{messageText(replyTo).slice(0, 180)}</p>
@@ -744,6 +802,7 @@ function Conversation({
       )}
       <form
         className="composer messenger-composer"
+        hidden={searching}
         data-unsaved={!!text.trim() || !!file || !!replyTo}
         data-pending={busy}
         onSubmit={(e) => {
@@ -810,10 +869,11 @@ function Conversation({
             disabled={!text.trim() || busy || !!file || !navigator.onLine}
           >
             <Send size={20} />
+            <span className="send-label">전송</span>
           </button>
         </div>
       </form>
-      {emojis && (
+      {emojis && !searching && (
         <div className="messenger-emoji-list" aria-label="이모지">
           {['😊', '👍', '✅', '🙏', '👏', '❤️', '👀', '🍽️', '📦', '☕', '🙌', '🙂'].map((emoji) => (
             <button
@@ -830,22 +890,22 @@ function Conversation({
           ))}
         </div>
       )}
-      {attachments && (
+      {attachments && !searching && (
         <div className="messenger-attachments">
           <button onClick={() => setUpload('RECEIPT')}>
-            <span>
+            <span data-tone="receipt">
               <ReceiptText size={24} />
             </span>
             영수증 분석
           </button>
           <button onClick={() => fileInput.current?.click()}>
-            <span>
+            <span data-tone="file">
               <Paperclip size={24} />
             </span>
             사진·PDF
           </button>
           <button onClick={() => cameraInput.current?.click()}>
-            <span>
+            <span data-tone="camera">
               <Camera size={24} />
             </span>
             사진 촬영
@@ -856,7 +916,7 @@ function Conversation({
               setScheduleText({ text: '' });
             }}
           >
-            <span>
+            <span data-tone="schedule">
               <CalendarDays size={24} />
             </span>
             근무표 입력

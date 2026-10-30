@@ -612,39 +612,6 @@
 .finance-shortcuts a > svg:last-child {
   color: var(--text-disabled);
 }
-.finance-kpis {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
-  margin-bottom: var(--section-gap);
-}
-.finance-kpis article {
-  min-width: 0;
-  padding: 16px 18px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  background: var(--surface);
-  box-shadow: var(--shadow-xs);
-}
-.finance-kpis h2 {
-  color: var(--text-secondary);
-  font-size: var(--fs-13);
-  font-weight: 600;
-}
-.finance-kpis strong {
-  display: block;
-  margin: 8px 0 6px;
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-  font-variant-numeric: tabular-nums;
-}
-.finance-kpis p {
-  color: var(--text-tertiary);
-  font-size: var(--fs-12);
-  line-height: var(--lh-normal);
-}
 .home-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -658,6 +625,11 @@
   gap: 12px 16px;
   padding: 8px var(--panel-pad) 20px;
   color: var(--text-secondary);
+}
+.finance-readiness > p {
+  flex-basis: 100%;
+  order: 5;
+  margin-top: -4px;
 }
 .finance-readiness strong {
   margin-left: auto;
@@ -724,7 +696,6 @@
   .cost-group-body {
     gap: 18px;
   }
-  .finance-kpis,
   .finance-shortcuts {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -918,12 +889,6 @@
   .finance-shortcuts a {
     padding: 12px;
     font-size: var(--fs-13);
-  }
-  .finance-kpis article {
-    padding: 14px;
-  }
-  .finance-kpis strong {
-    font-size: 20px;
   }
 }
 

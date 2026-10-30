@@ -136,14 +136,14 @@ body.chat-route {
   color: #536572;
 }
 .messenger-room-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 18px;
+  width: 46px;
+  height: 46px;
+  border-radius: 17px;
 }
 .messenger-header-avatar {
-  width: 43px;
-  height: 43px;
-  border-radius: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 15px;
 }
 .messenger-rooms-footer {
   display: grid;
@@ -181,9 +181,9 @@ body.chat-route {
   display: flex;
   flex-shrink: 0;
   align-items: center;
-  gap: 13px;
-  min-height: 82px;
-  padding: 17px 23px;
+  gap: 12px;
+  min-height: 66px;
+  padding: 12px 16px 12px 20px;
   border-bottom: 1px solid var(--chat-header-border);
   background: var(--chat-background);
 }
@@ -221,66 +221,124 @@ body.chat-route {
   margin: 0;
   overflow: hidden;
   color: var(--text);
-  font-size: 17px;
-  letter-spacing: -0.35px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.messenger-member-count {
+  margin-left: 6px;
+  color: var(--chat-meta);
+  font-size: 15px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
 .messenger-header-title > span {
   display: block;
-  margin-top: 4px;
+  margin-top: 2px;
   color: var(--chat-meta);
   font-size: var(--fs-12);
 }
+/* Notice: a translucent card floating over the top of the conversation */
 .messenger-notice {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  left: 14px;
+  z-index: 3;
   display: flex;
-  flex-shrink: 0;
   align-items: center;
-  gap: 8px;
-  margin: 0;
-  padding: 11px 23px;
-  border-bottom: 1px solid var(--chat-notice-border);
-  background: var(--chat-notice);
-  color: var(--chat-notice-text);
-  font-size: var(--fs-12);
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgb(255 255 255 / 0.95);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+  color: var(--text);
+  font-size: var(--fs-13);
+}
+.messenger-notice svg {
+  flex-shrink: 0;
+  color: var(--chat-meta);
+}
+.messenger-notice span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.messenger-history-wrap:has(> .messenger-notice) .messenger-history.messages {
+  padding-top: 64px;
+}
+
+/* In-chat search: the field takes over the header, results are stepped from the bottom bar */
+.messenger-header[data-searching='true'] {
+  gap: 6px;
+  padding-left: 8px;
 }
 .messenger-search {
   display: flex;
-  flex-shrink: 0;
+  flex: 1;
   align-items: center;
-  gap: 9px;
+  gap: 8px;
   min-width: 0;
-  padding: 9px 15px;
-  background: var(--chat-notice);
-  color: var(--chat-notice-text);
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text-tertiary);
+  cursor: text;
 }
 .messenger-search input {
   flex: 1;
   min-width: 0;
-  min-height: 42px;
-  padding: 8px 10px;
-  border: 1px solid var(--border-strong);
-  border-radius: 6px;
-  background: var(--surface);
-  font: inherit;
-  font-size: 16px;
-  line-height: 22px;
-}
-.messenger-search > span {
-  font-size: var(--fs-12);
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-}
-.messenger-search .icon-btn {
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 42px;
-  min-width: 40px;
+  height: 100%;
   padding: 0;
   border: 0;
+  outline: none;
   background: transparent;
+  box-shadow: none;
+  color: var(--text);
+  font: inherit;
+  font-size: 15px;
+}
+.messenger-search input:focus {
+  box-shadow: none;
+}
+.messenger-search input::-webkit-search-cancel-button {
+  cursor: pointer;
+}
+.messenger-search-nav {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 2px;
+  min-height: 56px;
+  padding: 6px 10px 6px 20px;
+  border-top: 1px solid var(--divider);
+  background: var(--surface);
+}
+.messenger-search-nav > span {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-secondary);
+  font-size: var(--fs-14);
+  font-variant-numeric: tabular-nums;
+}
+.messenger-search-nav .icon-btn {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text);
   touch-action: manipulation;
+}
+.messenger-search-nav .icon-btn:hover:not(:disabled) {
+  background: var(--surface-muted);
+}
+.messenger-search-nav .icon-btn:disabled {
+  color: var(--text-disabled);
 }
 .messenger-search-empty {
   padding: 22px 12px;
@@ -321,9 +379,10 @@ body.chat-route {
   overflow: hidden;
 }
 .messenger-history.messages {
+  --chat-pad-x: 24px;
   height: 100%;
   min-height: 0;
-  padding: 23px 29px 35px;
+  padding: 20px var(--chat-pad-x) 28px;
   overflow-y: auto;
   overscroll-behavior: contain;
   background: var(--chat-background);
@@ -346,13 +405,37 @@ body.chat-route {
   line-height: 1.3;
 }
 .messenger-history .message {
+  position: relative;
   display: flex;
   align-items: flex-start;
-  gap: 9px;
-  margin: 0 0 17px;
+  gap: 8px;
+  margin: 0 0 14px;
 }
 .messenger-history .message.continued {
-  margin-top: -10px;
+  margin-top: -9px;
+}
+/* KakaoTalk-style jump: the found or replied-to message is shaded, then fades */
+.messenger-history .message.message-flash::after {
+  content: '';
+  position: absolute;
+  inset: -5px calc(-1 * var(--chat-pad-x, 29px));
+  background: rgb(0 0 0 / 0.08);
+  pointer-events: none;
+  animation: chat-flash 1.8s ease-out forwards;
+}
+@keyframes chat-flash {
+  0%,
+  40% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .messenger-history .message.message-flash::after {
+    animation: none;
+  }
 }
 .messenger-history .message.own {
   justify-content: flex-end;
@@ -361,9 +444,9 @@ body.chat-route {
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  width: 38px;
-  height: 38px;
-  border-radius: 14px;
+  width: 40px;
+  height: 40px;
+  border-radius: 15px;
   background: var(--surface-muted);
   color: var(--text-secondary);
   font-size: 15px;
@@ -373,7 +456,7 @@ body.chat-route {
 }
 .messenger-history .message-content {
   min-width: 0;
-  max-width: min(84%, 620px);
+  max-width: min(70%, 540px);
 }
 .messenger-history .message-author {
   margin: 0 0 6px;
@@ -412,15 +495,15 @@ body.chat-route {
 }
 .messenger-history .message-bubble {
   position: relative;
-  padding: 10px 13px;
+  padding: 8px 12px;
   border: 0;
   border-radius: 4px 12px 12px 12px;
   background: var(--chat-incoming);
   color: var(--text);
   font-size: var(--fs-14);
-  line-height: 1.6;
+  line-height: 1.5;
   white-space: pre-wrap;
-  word-break: normal;
+  word-break: keep-all;
   overflow-wrap: anywhere;
   box-shadow: 0 1px 1px #00000009;
 }
@@ -456,24 +539,21 @@ body.chat-route {
 }
 .messenger-message-body mark {
   padding: 0 1px;
-  border-radius: 2px;
-  background: #fde68a;
-  color: var(--text);
+  border-radius: 3px;
+  background: rgb(255 122 0 / 0.22);
+  color: inherit;
+  font-weight: 700;
 }
-.messenger-history .message-target .message-bubble {
-  outline: 2px solid var(--brand);
-  outline-offset: 3px;
-}
-.message.message-target .message-content {
-  border-radius: 6px;
-  outline: 2px solid #d4a62d;
-  outline-offset: 8px;
+/* The current search result: the keyword itself, not a box around the message */
+.messenger-history .message-target mark {
+  background: #e35b00;
+  color: #ffffff;
 }
 .messenger-history .chat-deleted-message {
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text-secondary);
-  font-style: italic;
+  border: 0;
+  background: rgb(255 255 255 / 0.55);
+  color: var(--chat-meta);
+  font-style: normal;
   box-shadow: none;
 }
 .messenger-history .chat-deleted-message::before {
@@ -496,41 +576,95 @@ body.chat-route {
 .chat-message-more:focus-visible {
   opacity: 1;
 }
+/* Phones use long-press, as in KakaoTalk; the button stays reachable by keyboard
+   and screen readers but takes no space. */
+@media (hover: none) {
+  .chat-message-more:not(:focus-visible) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+}
 .chat-message-more:hover {
   background: #ffffffb0;
 }
+/* Reply: KakaoTalk shows "OO에게 답장" and the quoted line inside the same bubble */
 .chat-message-quote {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
+  position: relative;
+  display: block;
   width: 100%;
   min-width: 0;
   max-width: 100%;
-  margin-bottom: 5px;
-  padding: 10px 12px;
+  margin: 0 0 4px;
+  padding: 8px 12px;
   border: 0;
-  border-left: 3px solid var(--brand);
-  border-radius: 6px;
-  background: var(--surface);
+  border-radius: 4px 12px 12px 12px;
+  background: var(--chat-incoming);
   color: var(--text);
   text-align: left;
 }
-.chat-message-quote > span {
-  min-width: 0;
+.own .chat-message-quote {
+  border-radius: 12px 4px 12px 12px;
+  background: var(--chat-outgoing);
+  color: var(--chat-outgoing-text);
 }
 .chat-message-quote strong {
   display: block;
-  font-size: var(--fs-12);
-  font-weight: 600;
+  font-size: var(--fs-13);
+  font-weight: 700;
 }
 .chat-message-quote small {
   display: block;
-  max-width: 300px;
+  max-width: 320px;
+  margin-top: 2px;
   overflow: hidden;
-  color: var(--text-secondary);
-  font-size: var(--fs-12);
+  color: rgb(0 0 0 / 0.5);
+  font-size: var(--fs-13);
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.chat-message-quote:has(+ .messenger-text-content),
+.chat-message-quote:has(+ .chat-deleted-message) {
+  margin-bottom: 0;
+  padding-bottom: 8px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.chat-message-quote:has(+ .messenger-text-content)::after,
+.chat-message-quote:has(+ .chat-deleted-message)::after {
+  content: '';
+  position: absolute;
+  right: 12px;
+  bottom: 0;
+  left: 12px;
+  height: 1px;
+  background: rgb(0 0 0 / 0.1);
+}
+.chat-message-quote + .messenger-text-content > .message-bubble,
+.chat-message-quote + .chat-deleted-message {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+.messenger-history .chat-message-quote + .messenger-text-content > .message-bubble::before,
+.messenger-history .chat-message-quote + .chat-deleted-message::before {
+  display: none;
+}
+.messenger-history .message:not(.continued) .chat-message-quote::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -7px;
+  border-top: 8px solid var(--chat-incoming);
+  border-left: 8px solid transparent;
+}
+.messenger-history .own:not(.continued) .chat-message-quote::before {
+  right: -7px;
+  left: auto;
+  border-top-color: var(--chat-outgoing);
+  border-right: 8px solid transparent;
+  border-left: 0;
 }
 .messenger-text-expand {
   display: block;
@@ -628,34 +762,55 @@ body.chat-route {
 }
 .messenger-bottom {
   position: absolute;
-  right: 15px;
+  right: 14px;
   bottom: 14px;
   display: grid;
   place-items: center;
-  width: 35px;
-  height: 35px;
-  border: 1px solid #ffffff85;
+  width: 38px;
+  height: 38px;
+  border: 0;
   border-radius: 50%;
-  background: #ffffffed;
+  background: rgb(255 255 255 / 0.94);
   color: var(--text-secondary);
-  box-shadow: 0 1px 4px #00000010;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.14);
 }
+/* New-message preview, as in KakaoTalk: who wrote and the first line */
 .messenger-new {
   position: absolute;
-  bottom: 16px;
-  left: 50%;
+  right: 62px;
+  bottom: 14px;
+  left: 14px;
+  z-index: 2;
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 9px 15px;
+  gap: 8px;
+  max-width: 560px;
+  min-height: 38px;
+  margin: 0 auto;
+  padding: 0 10px 0 14px;
   border: 0;
-  border-radius: 20px;
-  background: var(--surface);
+  border-radius: 19px;
+  background: rgb(255 255 255 / 0.96);
   color: var(--text);
-  font-size: var(--fs-12);
+  font-size: var(--fs-13);
+  text-align: left;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.14);
+}
+.messenger-new strong {
+  flex-shrink: 0;
+  font-weight: 700;
+}
+.messenger-new span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-secondary);
+  text-overflow: ellipsis;
   white-space: nowrap;
-  box-shadow: 0 2px 8px #00000013;
-  transform: translateX(-50%);
+}
+.messenger-new svg {
+  flex-shrink: 0;
+  color: var(--text-tertiary);
 }
 
 /* Receipt and schedule cards posted in the chat. A fixed width keeps every
@@ -764,10 +919,9 @@ body.chat-route {
   flex-shrink: 0;
   align-items: center;
   gap: 12px;
-  padding: 12px 17px;
-  border-top: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--brand);
+  padding: 10px 10px 10px 18px;
+  border-top: 1px solid var(--divider);
+  background: var(--surface-subtle);
 }
 .chat-reply-draft > div {
   flex: 1;
@@ -775,13 +929,14 @@ body.chat-route {
 }
 .chat-reply-draft strong {
   color: var(--text);
-  font-size: var(--fs-12);
+  font-size: var(--fs-13);
+  font-weight: 700;
 }
 .chat-reply-draft p {
-  margin-top: 4px;
+  margin-top: 2px;
   overflow: hidden;
-  color: var(--text-secondary);
-  font-size: var(--fs-12);
+  color: var(--text-tertiary);
+  font-size: var(--fs-13);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -927,14 +1082,87 @@ body.chat-route {
   height: 22px;
   margin: 0;
 }
+.send-label {
+  display: none;
+}
+
+/* Desktop composer, as in KakaoTalk for PC: a roomy white input with the tools
+   underneath and a 전송 button that turns yellow once there is something to send. */
+@media (min-width: 761px) {
+  .messenger-composer.composer {
+    display: grid;
+    grid-template-columns: auto auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      'input input input input'
+      'attach emoji . send';
+    align-items: center;
+    gap: 0 2px;
+    min-height: 0;
+    padding: 2px 14px 10px 8px;
+    border-top: 1px solid var(--divider);
+  }
+  .messenger-composer .messenger-input-wrap {
+    display: contents;
+  }
+  .messenger-input-wrap textarea {
+    grid-area: input;
+    min-height: 68px;
+    padding: 12px 10px 4px 12px;
+    font-size: var(--fs-14);
+    line-height: 21px;
+  }
+  .messenger-composer .attach-button {
+    grid-area: attach;
+    width: 36px;
+    min-width: 36px;
+    height: 36px;
+    border-radius: 8px;
+  }
+  .messenger-composer .attach-button > svg {
+    width: 22px;
+    height: 22px;
+  }
+  .messenger-input-wrap .messenger-emoji-btn {
+    grid-area: emoji;
+    align-self: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+  }
+  .messenger-composer :is(.attach-button, .messenger-emoji-btn):hover {
+    background: var(--surface-muted);
+    color: var(--text-secondary);
+  }
+  .messenger-input-wrap .send-button {
+    grid-area: send;
+    align-self: center;
+    width: auto;
+    min-width: 60px;
+    height: 34px;
+    padding: 0 14px;
+    border-radius: 6px;
+    font-size: var(--fs-13);
+    font-weight: 700;
+  }
+  .messenger-input-wrap .send-button:disabled {
+    background: var(--surface-muted);
+    color: var(--text-disabled);
+  }
+  .messenger-input-wrap .send-button > svg {
+    display: none;
+  }
+  .send-label {
+    display: inline;
+  }
+}
 .messenger-attachments {
   display: grid;
   flex-shrink: 0;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
   padding: 22px 20px 26px;
-  border-top: 1px solid var(--border);
-  background: var(--surface-subtle);
+  border-top: 1px solid var(--divider);
+  background: var(--surface);
 }
 .messenger-attachments > button {
   display: flex;
@@ -949,12 +1177,23 @@ body.chat-route {
 .messenger-attachments > button > span {
   display: grid;
   place-items: center;
-  width: 53px;
-  height: 53px;
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  background: var(--surface);
-  color: var(--brand);
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #8b95a1;
+  color: #ffffff;
+}
+.messenger-attachments > button > span[data-tone='receipt'] {
+  background: #3d8ef0;
+}
+.messenger-attachments > button > span[data-tone='file'] {
+  background: #31b77a;
+}
+.messenger-attachments > button > span[data-tone='camera'] {
+  background: #f59f3a;
+}
+.messenger-attachments > button > span[data-tone='schedule'] {
+  background: #8b6cf0;
 }
 .messenger-emoji-list {
   display: flex;
@@ -963,7 +1202,8 @@ body.chat-route {
   justify-content: center;
   gap: 8px;
   padding: 15px 20px;
-  background: var(--surface-subtle);
+  border-top: 1px solid var(--divider);
+  background: var(--surface);
 }
 .messenger-emoji-list button {
   padding: 6px;
@@ -979,6 +1219,27 @@ body.chat-route {
   max-height: 65dvh;
   margin: 0 auto 18px;
   object-fit: contain;
+}
+dialog.modal:has(.messenger-room-info) {
+  position: fixed;
+  inset: 0 0 0 auto;
+  width: min(360px, 88vw);
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  border-radius: 0;
+  animation: chat-drawer 0.2s ease-out;
+}
+@keyframes chat-drawer {
+  from {
+    transform: translateX(24px);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  dialog.modal:has(.messenger-room-info) {
+    animation: none;
+  }
 }
 .messenger-room-info {
   display: flex;
@@ -1006,51 +1267,68 @@ body.chat-route {
   border-top: 1px solid var(--divider);
   font-size: var(--fs-14);
 }
-.messenger-menu-links a svg:last-child {
+.messenger-menu-links a svg:last-child:not(:first-child) {
   margin-left: auto;
   color: var(--text-tertiary);
 }
+/* Long-press menu: a short list like KakaoTalk's, not a grid of tiles */
+dialog.modal:has(.chat-action-list) {
+  width: min(340px, calc(100vw - 48px));
+  padding: 18px 8px 8px;
+}
+dialog.modal:has(.chat-action-list) > header {
+  margin: 0 8px 8px 12px;
+}
+dialog.modal:has(.chat-action-list) > header h2 {
+  font-size: var(--fs-16);
+}
 .chat-action-preview {
   margin: 4px 0 20px;
-  padding: 14px;
-  border-left: 3px solid var(--brand);
-  border-radius: 4px;
+  padding: 12px 14px;
+  border-radius: 10px;
   background: var(--surface-subtle);
+}
+dialog.modal:has(.chat-action-list) .chat-action-preview {
+  margin: 0 12px 8px;
 }
 .chat-action-preview strong {
   font-size: var(--fs-12);
 }
 .chat-action-preview p {
-  max-height: 170px;
-  margin-top: 6px;
-  overflow: auto;
+  display: -webkit-box;
+  margin-top: 4px;
+  overflow: hidden;
   color: var(--text-secondary);
   font-size: var(--fs-13);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
 }
-.chat-action-grid {
+.chat-action-list {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
 }
-.chat-action-grid > button {
+.chat-action-list > button {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
-  min-height: 80px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--surface);
+  gap: 14px;
+  min-height: 50px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
   color: var(--text);
-  font-size: var(--fs-13);
+  font-size: var(--fs-15, 15px);
+  text-align: left;
 }
-.chat-action-grid > button:hover {
+.chat-action-list > button svg {
+  color: var(--text-tertiary);
+}
+.chat-action-list > button:hover {
   background: var(--surface-subtle);
 }
-.chat-action-grid > button.danger-text {
+.chat-action-list > button.danger-text,
+.chat-action-list > button.danger-text svg {
   color: var(--danger);
 }
 .chat-forward-rooms {
@@ -1171,10 +1449,12 @@ body.chat-route {
     grid-template-columns: 220px minmax(0, 1fr);
   }
   .messenger-history .message-content {
-    max-width: 83%;
+    max-width: 76%;
   }
   .messenger-history.messages {
-    padding: 20px;
+    --chat-pad-x: 20px;
+    padding-right: var(--chat-pad-x);
+    padding-left: var(--chat-pad-x);
   }
 }
 
@@ -1251,9 +1531,16 @@ body.chat-route {
     width: 100%;
   }
   .messenger-header {
-    gap: 5px;
-    min-height: 65px;
-    padding: calc(10px + env(safe-area-inset-top)) 9px 10px 7px;
+    gap: 4px;
+    min-height: 58px;
+    padding: calc(8px + env(safe-area-inset-top)) 6px 8px 6px;
+  }
+  .messenger-header[data-searching='true'] {
+    padding-right: 12px;
+    padding-left: 6px;
+  }
+  .messenger-search input {
+    font-size: 16px;
   }
   .messenger-header .messenger-back {
     display: inline-flex;
@@ -1268,39 +1555,17 @@ body.chat-route {
     font-size: var(--fs-11);
   }
   .messenger-notice {
-    padding: 9px 15px;
-    font-size: var(--fs-11);
+    top: 8px;
+    right: 10px;
+    left: 10px;
+    padding: 9px 12px;
+    font-size: var(--fs-12);
   }
-  .messenger-search {
-    display: grid;
-    grid-template-columns: 20px minmax(0, 1fr) auto auto auto;
-    gap: 6px;
-    padding: 8px 10px;
+  .messenger-history-wrap:has(> .messenger-notice) .messenger-history.messages {
+    padding-top: 56px;
   }
-  .messenger-search > input {
-    grid-column: 2 / 5;
-    width: 100%;
-  }
-  .messenger-search > span {
-    grid-row: 2;
-    grid-column: 2;
-    align-self: center;
-  }
-  .messenger-search > button:nth-of-type(1) {
-    grid-row: 2;
-    grid-column: 3;
-  }
-  .messenger-search > button:nth-of-type(2) {
-    grid-row: 2;
-    grid-column: 4;
-  }
-  .messenger-search > button:nth-of-type(3) {
-    grid-row: 1;
-    grid-column: 5;
-  }
-  .messenger-search .icon-btn {
-    width: 36px;
-    height: 36px;
+  .messenger-search-nav {
+    padding-bottom: calc(6px + env(safe-area-inset-bottom));
   }
   .messenger-schedule-detected {
     font-size: var(--fs-11);
@@ -1309,22 +1574,23 @@ body.chat-route {
     touch-action: pan-y pinch-zoom;
   }
   .messenger-history.messages {
-    padding: 18px 13px 25px;
+    --chat-pad-x: 12px;
+    padding: 16px var(--chat-pad-x) 22px;
   }
   .messenger-date.chat-date {
     margin-bottom: 22px;
     font-size: var(--fs-11);
   }
   .messenger-history .message-avatar {
-    width: 34px;
-    height: 34px;
-    border-radius: 12px;
+    width: 36px;
+    height: 36px;
+    border-radius: 14px;
   }
   .messenger-history .message-content {
-    max-width: 87%;
+    max-width: 80%;
   }
   .messenger-history .message.own .message-content {
-    max-width: 89%;
+    max-width: 82%;
   }
   .messenger-message-line {
     flex-wrap: wrap;
@@ -1334,20 +1600,15 @@ body.chat-route {
     max-width: 100%;
   }
   .messenger-history .message-bubble {
-    padding: 9px 12px;
+    padding: 8px 11px;
     font-size: 15px;
-    line-height: 1.6;
+    line-height: 1.45;
   }
   .messenger-history .message-time {
     font-size: 10px;
   }
-  .chat-message-more {
-    width: 24px;
-    height: 22px;
-    opacity: 0.65;
-  }
   .chat-message-quote small {
-    max-width: 210px;
+    max-width: 200px;
   }
   .receipt-card {
     width: 265px;
@@ -1373,8 +1634,7 @@ body.chat-route {
     width: 36px;
     min-width: 36px;
   }
-  .messenger-composer textarea,
-  .messenger-search input {
+  .messenger-composer textarea {
     font-size: 16px;
   }
   .messenger-attachments {
@@ -1389,6 +1649,9 @@ body.chat-route {
   }
   html[data-chat-keyboard='true'] .is-chat .messenger-notice {
     display: none;
+  }
+  html[data-chat-keyboard='true'] .messenger-history-wrap .messenger-history.messages {
+    padding-top: 16px;
   }
   .chat-route .modal {
     top: calc(var(--chat-viewport-top, 0px) + 12px);

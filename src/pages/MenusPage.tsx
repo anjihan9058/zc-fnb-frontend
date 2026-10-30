@@ -176,6 +176,13 @@ export function MenusPage() {
           메뉴 등록
         </button>
       </div>
+      <div className="analysis-menu-entry">
+        <Link className="btn" to="/reports?view=cost">
+          전월 비교 · AI 원가 분석
+          <ArrowRight size={16} />
+        </Link>
+        <span>기존 원가 분석에서 재료별 기여도와 판매가격 시뮬레이션을 확인하세요.</span>
+      </div>
       <div className="info-box">
         <ChefHat size={19} />
         <span>

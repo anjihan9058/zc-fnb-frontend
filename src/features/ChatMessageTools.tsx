@@ -186,7 +186,7 @@ export function ChatMessageTools({
         </p>
       </blockquote>
       {mode === 'actions' ? (
-        <div className="chat-action-grid">
+        <div className="chat-action-list">
           <button onClick={() => void copyValueToClipboard(messageText(message))}>
             <Copy size={20} />
             복사
