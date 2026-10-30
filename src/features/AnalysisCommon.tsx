@@ -55,6 +55,7 @@ export function AnalysisFilters({
           <span>
             <strong>가상 데이터 · AI 응답 예시</strong> 실제 사업장 기록과 분리된 예시이며 실제 AI
             분석·서버 API는 호출하지 않습니다. 전월과 비교하며 금액은 원 단위입니다.
+            {model.hasFinancialInput && ' 선택한 월의 재무 금액에는 직접 입력한 테스트 값이 적용되어 있습니다.'}
           </span>
         ) : (
           <span>

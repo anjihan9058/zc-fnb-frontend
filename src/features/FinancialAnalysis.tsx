@@ -23,6 +23,7 @@ import { demoFinancialInsight } from '../mocks/analytics';
 import { won } from '../shared/format';
 import { Empty } from '../shared/ui';
 import { AiAnalysisCard, AnalysisFilters, DeltaChip, PointDelta } from './AnalysisCommon';
+import { FinancialInputsEditor } from './FinancialInputsEditor';
 
 type SeriesRow = ReturnType<typeof financialSeries>[number];
 type Metrics = ReturnType<typeof financialMetrics>;
@@ -86,7 +87,7 @@ export function FinancialAnalysis({ model }: { model: AnalysisPreviewModel }) {
       goodWhen: 'down' as const,
       trend: year.map((r) => r.food),
       detail: `매출 대비 ${pct(now.foodRate)}`,
-      note: '레시피 소요 + 폐기 가정 · 예시',
+      note: row?.entry_source === 'manual' ? '직접 입력한 월간 식재료비 · 테스트' : '레시피 소요 + 폐기 가정 · 예시',
     },
     {
       name: '인건비',
@@ -95,7 +96,7 @@ export function FinancialAnalysis({ model }: { model: AnalysisPreviewModel }) {
       goodWhen: 'down' as const,
       trend: year.map((r) => r.labor),
       detail: `매출 대비 ${pct(now.laborRate)}`,
-      note: '월별 인건비 예시',
+      note: row?.entry_source === 'manual' ? '직접 입력한 월간 인건비 · 테스트' : '월별 인건비 예시',
     },
     {
       name: profitLabel,
@@ -124,6 +125,8 @@ export function FinancialAnalysis({ model }: { model: AnalysisPreviewModel }) {
           </select>
         </label>
       </AnalysisFilters>
+
+      <FinancialInputsEditor model={model} />
 
       <div className="analysis-kpis">
         {kpis.map((k) => (

@@ -18,6 +18,8 @@ export interface CostSnapshot {
 }
 export interface FinancialMonth {
   month: string;
+  /** Local test input. Omitted for generated fixtures and API records. */
+  entry_source?: 'manual';
   net_sales: number | null;
   food_cost: number | null;
   labor_cost: number | null;

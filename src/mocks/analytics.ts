@@ -129,6 +129,8 @@ export function createAnalysisDemo(workspaceId: string, endMonth: string): Analy
 const pct = (n: number | null) =>
   n == null ? '비교 불가' : `${n >= 0 ? '+' : ''}${n.toFixed(1)}%`;
 export function demoFinancialInsight(data: AnalysisDataset, month: string): AnalysisInsight {
+  const manuallyEntered = data.financials.some((r) =>
+    (r.month === month || r.month === shiftMonth(month, -1)) && r.entry_source === 'manual');
   const now = financialMetrics(data.financials.find((r) => r.month === month)),
     prev = financialMetrics(data.financials.find((r) => r.month === shiftMonth(month, -1)));
   const salesGrowth = growth(now.sales, prev.sales),
@@ -145,7 +147,7 @@ export function demoFinancialInsight(data: AnalysisDataset, month: string): Anal
     }))
     .filter((i) => i.value != null)
     .sort((a, b) => b.value! - a.value!);
-  const price = changes[0];
+  const price = manuallyEntered ? undefined : changes[0];
   const costChanges = [
     { name: '식재료비', value: now.food, old: prev.food },
     { name: '인건비', value: now.labor, old: prev.labor },
@@ -181,7 +183,9 @@ export function demoFinancialInsight(data: AnalysisDataset, month: string): Anal
     ],
     limitations: [
       '이 카드는 가상 데이터를 규칙으로 설명한 AI 응답 예시이며 실제 AI를 호출하지 않습니다.',
-      '단가 변동과 비용 변동의 동반 관찰이며, 판매량·메뉴 구성·폐기 요인 전체를 분해한 인과 분석은 아닙니다.',
+      manuallyEntered
+        ? '당월 또는 전월에 직접 입력한 테스트 금액이 포함됩니다. 비용 합계만으로 식재료 단가·판매량 등의 원인을 판단하지 않습니다.'
+        : '단가 변동과 비용 변동의 동반 관찰이며, 판매량·메뉴 구성·폐기 요인 전체를 분해한 인과 분석은 아닙니다.',
       '당월을 포함한 모든 금액은 월간 예시이며 실제 마감·정산 수치가 아닙니다.',
     ],
   };
